@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movies of {{ user.name }}</title>
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    >
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <h1 class="mb-4">Movies of {{ user.name }}</h1>
+
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mb-4">
+        ← Back to User List
+    </a>
+
+    <!-- User's Favorite Movies -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="mb-0">Favorite Movies</h4>
+        </div>
+
+        <ul class="list-group list-group-flush">
+            {% if movies %}
+                {% for movie in movies %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <strong>{{ movie.name }}</strong><br>
+                            <small>Director: {{ movie.director or "Unknown" }}</small><br>
+                            <small>Year: {{ movie.year_of_release or "-" }}</small>
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <!-- Update Movie Title -->
+                            <form
+                                method="POST"
+                                action="{{ url_for('update_movie',
+                                                   user_id=user.id,
+                                                   movie_id=movie.id) }}"
+                                class="d-flex"
+                            >
+                                <input
+                                    type="text"
+                                    name="title"
+                                    placeholder="New title"
+                                    class="form-control form-control-sm"
+                                    required
+                                >
+
+                                <button type="submit" class="btn btn-warning btn-sm ms-2">
+                                    ✏️ Update
+                                </button>
+                            </form>
+
+                            <!-- Delete Movie -->
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_movie',
+                                                   user_id=user.id,
+                                                   movie_id=movie.id) }}"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Delete this movie?')"
+                                >
+                                    🗑️ Delete
+                                </button>
+                            </form>
+
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">No movies added yet.</li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <!-- Add New Movie -->
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Add a New Movie</h4>
+        </div>
+
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_movie', user_id=user.id) }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Movie Title</label>
+                    <input type="text" name="movie" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Director</label>
+                    <input type="text" name="director" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Year of Release</label>
+                    <input type="number" name="year" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Poster URL</label>
+                    <input type="url" name="poster_url" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Movie</button>
+
+            </form>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
